@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { supabase } from './hooks/useFiches';
 import { useNavigate } from "react-router-dom";
-import { supabase } from './hooks/useProduits';
+import { supabase } from './supabaseClient';
 
 
 export default function Connexion() {

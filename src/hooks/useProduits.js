@@ -1,9 +1,31 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-export const supabase = createClient(supabaseUrl, supabaseKey)
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 export function useProduits() {
-  // vos hooks…
+  const [produits, setProduits] = useState([]);
+  const [chargement, setChargement] = useState(true);
+  const [erreur, setErreur] = useState(null);
+
+  useEffect(() => {
+    async function chargerProduits() {
+      setChargement(true);
+      setErreur(null);
+      const { data, error } = await supabase
+        .from('produits')
+        .select('*')
+        .order('nom', { ascending: true });
+
+      if (error) {
+        setErreur('Erreur lors du chargement des produits');
+        setProduits([]);
+      } else {
+        setProduits(data);
+      }
+      setChargement(false);
+    }
+
+    chargerProduits();
+  }, []);
+
+  return { produits, chargement, erreur };
 }
