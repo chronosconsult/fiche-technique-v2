@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { supabase } from './hooks/useFiches';
 import { useNavigate } from "react-router-dom";
+import { supabase } from './hooks/useProduits';
+
 
 export default function Connexion() {
   const [email, setEmail] = useState("");
