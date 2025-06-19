@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useProduits from "./hooks/useProduits";
+import { useProduits } from "./hooks/useProduits";
 
 export default function Mercurial() {
   const {
