@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useProduits from "./hooks/useProduits";
 import useFiches from "./hooks/useFiches";
+import { Link } from "react-router-dom";
 
 export default function FicheTechnique() {
   const [titre, setTitre] = useState("");
@@ -64,7 +65,11 @@ const margeTTC = prixVente > 0 ? ((prixVente - coutParPortionTTC) / prixVente) *
   return (
     <div style={{ padding: 20, maxWidth: 1000, fontFamily: "Arial", backgroundColor: "#fdfdfc" }}>
       <h2 style={{ borderBottom: "2px solid #444", color: "#2c3e50" }}>FICHE TECHNIQUE</h2>
-
+    <div style={{ marginBottom: "1rem" }}>
+      <a href="/fiche-technique">
+        <button>Nouvelle fiche technique</button>
+      </a>
+    </div>
       <div style={{ display: "flex", gap: 20, marginBottom: 20 }}>
         <label style={{ flex: 1 }}>Titre :<br />
           <input style={{ width: '100%' }} value={titre} onChange={e => setTitre(e.target.value)} />
