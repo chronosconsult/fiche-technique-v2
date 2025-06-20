@@ -14,35 +14,37 @@ export default function Inscription() {
     setErreur("");
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password: motDePasse,
-      });
-      console.log("SIGNUP RESPONSE", data, error);
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password: motDePasse,
+});
+console.log("SIGNUP RESPONSE", data, error);
 
-      if (error) {
-        setErreur(error.message || "Erreur lors de l’inscription.");
-        return;
-      }
+if (error) {
+  setErreur(error.message || "Erreur lors de l’inscription.");
+  return;
+}
 
-      const user = data.user || data.session?.user;
-      if (!user) {
-        setErreur("Utilisateur introuvable après l'inscription.");
-        return;
-      }
+const user = data?.user || data?.session?.user;
+if (!user || !user.id) {
+  setErreur("Utilisateur introuvable après l'inscription.");
+  return;
+}
 
-      const { error: insertError } = await supabase.from("profils").insert([
-        {
-          id: user.id,
-          nom: nom,
-          trial_start: new Date(),
-        },
-      ]);
+const { error: insertError } = await supabase.from("profils").insert([
+  {
+    id: user.id,
+    nom: nom,
+    trial_start: new Date(),
+  },
+]);
 
-      if (insertError) {
-        setErreur("Profil non enregistré : " + insertError.message);
-        return;
-      }
+if (insertError) {
+  console.error("Erreur insertion profil :", insertError);
+  setErreur("Profil non enregistré : " + insertError.message);
+  return;
+}
+
 
       navigate("/");
     } catch (err) {
