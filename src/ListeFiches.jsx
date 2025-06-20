@@ -1,5 +1,5 @@
 import React from "react";
-import useFiches from "./hooks/useFiches";
+import { useFiches } from "./hooks/useFiches";
 
 export default function ListeFiches() {
   const { fiches, chargement } = useFiches();
