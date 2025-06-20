@@ -13,19 +13,35 @@ export default function Inscription() {
     e.preventDefault();
     setErreur("");
 
-    const { error } = await supabase.auth.signUp({
+    // Étape 1 : création du compte
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password: motDePasse,
-      options: {
-        data: { nom },
-      },
     });
 
-    if (error) {
-      setErreur(error.message || "Erreur lors de l’inscription");
-    } else {
-      navigate("/");
+    if (signUpError) {
+      setErreur(signUpError.message || "Erreur lors de l’inscription");
+      return;
     }
+
+    const user = signUpData.user;
+
+    // Étape 2 : insertion dans la table profils
+    const { error: insertError } = await supabase.from("profils").insert([
+      {
+        id: user.id,
+        nom: nom,
+        trial_start: new Date(),
+      },
+    ]);
+
+    if (insertError) {
+      setErreur("Compte créé, mais erreur lors de la création du profil.");
+      return;
+    }
+
+    // Redirection
+    navigate("/");
   }
 
   return (
@@ -35,7 +51,6 @@ export default function Inscription() {
       padding: 30,
       border: "1px solid #ddd",
       borderRadius: 8,
-      boxShadow: "0 0 10px rgba(0,0,0,0.05)",
       fontFamily: "Arial",
       backgroundColor: "#fff"
     }}>
