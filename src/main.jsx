@@ -5,16 +5,50 @@ import FicheTechnique from "./FicheTechnique";
 import Mercurial from "./Mercurial";
 import ListeFiches from "./ListeFiches";
 import Connexion from "./Connexion";
+import Inscription from "./Inscription";
+import RequireAuth from "./RequireAuth";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <Routes>
-       <Route path="/" element={<FicheTechnique />} />
-       <Route path="/fiche-technique" element={<FicheTechnique />} />
-       <Route path="/mercurial" element={<Mercurial />} />
-       <Route path="/fiches" element={<ListeFiches />} />
-       <Route path="/connexion" element={<Connexion />} />
+  <Route path="/inscription" element={<Inscription />} />
+  <Route path="/connexion" element={<Connexion />} />
+
+  <Route
+    path="/"
+    element={
+      <RequireAuth>
+        <FicheTechnique />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/fiche-technique"
+    element={
+      <RequireAuth>
+        <FicheTechnique />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/mercurial"
+    element={
+      <RequireAuth>
+        <Mercurial />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/fiches"
+    element={
+      <RequireAuth>
+        <ListeFiches />
+      </RequireAuth>
+    }
+  />
     </Routes>
+
   </BrowserRouter>
 );
