@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useProduits } from "./hooks/useProduits";
-import useFiches from "./hooks/useFiches";
+import { useFiches } from "./hooks/useFiches";
 import { Link } from "react-router-dom";
 
 export default function FicheTechnique() {
