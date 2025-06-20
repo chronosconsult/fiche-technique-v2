@@ -6,20 +6,27 @@ export default function Mercurial() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchProduits = async () => {
+      setLoading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        setProduits([]);
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase
+        .from("produits")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("nom");
+      if (error) console.error(error);
+      else setProduits(data);
+      setLoading(false);
+    };
     fetchProduits();
   }, []);
-
-  async function fetchProduits() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("produits")
-      .select("*")
-      .eq("user_id", supabase.auth.user().id)
-      .order("nom");
-    if (error) console.error(error);
-    else setProduits(data);
-    setLoading(false);
-  }
 
   async function handleChange(id, field, value) {
     setProduits((prev) =>
@@ -39,7 +46,7 @@ export default function Mercurial() {
     <table style={{ width: "100%", borderCollapse: "collapse" }}>
       <thead>
         <tr>
-          {["Nom", "Unité", "Prix HT", "Actions"].map((h) => (
+          {"Nom,Unité,Prix HT,Actions".split(",").map((h) => (
             <th key={h} style={{ borderBottom: "1px solid #ccc", padding: 8 }}>{h}</th>
           ))}
         </tr>
@@ -55,7 +62,7 @@ export default function Mercurial() {
             </td>
             <td style={{ padding: 4, textAlign: "center" }}>
               <input
-                value={p.unite}
+                value={p.unite || ""}
                 onChange={(e) => handleChange(p.id, "unite", e.target.value)}
               />
             </td>
