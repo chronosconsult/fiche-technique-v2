@@ -3,29 +3,45 @@ import { supabase } from "../supabaseClient";
 
 export function useFiches() {
   const [fiches, setFiches] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [erreur, setErreur] = useState(null);
+  const [chargement, setChargement] = useState(true);
 
   useEffect(() => {
-    async function chargerFiches() {
-      try {
-        const { data, error } = await supabase.from("fiches").select("*");
-        if (error) {
-          setErreur(error.message);
-          setFiches([]);
-        } else {
-          setFiches(data || []);
-        }
-      } catch (err) {
-        setErreur("Erreur chargement fiches : " + err.message);
-        setFiches([]);
-      } finally {
-        setLoading(false);
-      }
+    async function charger() {
+      setChargement(true);
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("fiches")
+        .select("*")
+        .eq("user_id", user.id);
+
+      if (!error) setFiches(data);
+      setChargement(false);
     }
 
-    chargerFiches();
+    charger();
   }, []);
 
-  return { fiches, loading, erreur };
+  async function ajouterFiche(fiche) {
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData?.user;
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("fiches")
+      .insert([{ ...fiche, user_id: user.id }])
+      .select();
+
+    if (!error && data.length > 0) {
+      setFiches([...fiches, data[0]]);
+    }
+  }
+
+  return {
+    fiches,
+    chargement,
+    ajouterFiche,
+  };
 }
