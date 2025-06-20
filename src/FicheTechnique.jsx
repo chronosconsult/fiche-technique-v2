@@ -1,43 +1,57 @@
+// src/FicheTechnique.jsx
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useFiches } from "../hooks/useFiches";
-import { useProduits } from "../hooks/useProduits";
-import { supabase } from "../supabaseClient";
+import { useNavigate, useParams } from "react-router-dom";
+import supabase from "./supabaseClient";
 
 export default function FicheTechnique() {
   const navigate = useNavigate();
-  const { fiches, ajouterFiche } = useFiches();
-  const { produits } = useProduits();
-
-  const [ficheId, setFicheId] = useState(null);
+  const { id } = useParams();
   const [titre, setTitre] = useState("");
   const [nbPortions, setNbPortions] = useState(1);
   const [prixVente, setPrixVente] = useState(0);
   const [ingredients, setIngredients] = useState([]);
+  const [produits, setProduits] = useState([]);
+  const [produitSelectionne, setProduitSelectionne] = useState(null);
+  const [quantite, setQuantite] = useState("");
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const titreFiche = params.get("fiche");
-    if (titreFiche && fiches.length > 0) {
-      const fiche = fiches.find(f => f.titre === titreFiche);
-      if (fiche) {
-        setFicheId(fiche.id);
-        setTitre(fiche.titre);
-        setNbPortions(fiche.nbPortions);
-        setPrixVente(fiche.prixVente);
-        setIngredients(fiche.ingredients || []);
+    async function chargerProduits() {
+      const { data, error } = await supabase.from("produits").select();
+      if (!error) setProduits(data);
+    }
+
+    async function chargerFiche() {
+      if (!id) return;
+      const { data, error } = await supabase.from("fiches").select().eq("id", id).single();
+      if (!error && data) {
+        setTitre(data.titre);
+        setNbPortions(data.nb_portions);
+        setPrixVente(data.prix_vente);
+        setIngredients(data.ingredients);
       }
     }
-  }, [fiches]);
 
-  const ajouterIngredient = (produit) => {
-    if (ingredients.find(i => i.nom === produit.nom)) return;
-    setIngredients([...ingredients, { ...produit, quantite: 1 }]);
+    chargerProduits();
+    chargerFiche();
+  }, [id]);
+
+  const ajouterIngredient = () => {
+    if (!produitSelectionne || !quantite) return;
+    const produit = produits.find(p => p.id === produitSelectionne);
+    const existant = ingredients.find(i => i.nom === produit.nom);
+    if (existant) return;
+    setIngredients([...ingredients, {
+      nom: produit.nom,
+      unite: produit.unite,
+      prix: produit.prix,
+      quantite: parseFloat(quantite)
+    }]);
+    setQuantite("");
   };
 
   const modifierQuantite = (index, valeur) => {
     const copie = [...ingredients];
-    copie[index].quantite = valeur;
+    copie[index].quantite = parseFloat(valeur);
     setIngredients(copie);
   };
 
@@ -47,101 +61,118 @@ export default function FicheTechnique() {
     setIngredients(copie);
   };
 
-  const enregistrerFiche = async () => {
+  const enregistrer = async () => {
     if (!titre) return alert("Titre obligatoire");
-    const fiche = { titre, nbPortions, prixVente, ingredients };
 
-    if (ficheId) {
-      const { error } = await supabase
-        .from('fiches')
-        .update(fiche)
-        .eq('id', ficheId);
+    const fiche = {
+      titre,
+      nb_portions: nbPortions,
+      prix_vente: prixVente,
+      ingredients
+    };
 
-      if (error) {
-        console.error(error);
-        return alert("Erreur lors de la mise à jour.");
-      }
-
-      alert("Fiche mise à jour.");
+    let result;
+    if (id) {
+      result = await supabase.from("fiches").update(fiche).eq("id", id);
     } else {
-      await ajouterFiche(fiche);
-      alert("Fiche enregistrée.");
+      result = await supabase.from("fiches").insert(fiche);
     }
-    navigate("/liste-fiches");
+
+    if (result.error) return alert("Erreur d'enregistrement");
+
+    alert("Fiche enregistrée");
+    navigate("/fiches");
   };
+
+  const totalHT = ingredients.reduce((acc, i) => acc + i.prix * i.quantite, 0);
 
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Fiche Technique</h2>
+
       <div className="mb-4">
         <input
           value={titre}
           onChange={(e) => setTitre(e.target.value)}
-          placeholder="Titre de la fiche"
-          className="border p-2 rounded w-full"
+          placeholder="Titre"
+          className="border rounded px-2 py-1 w-full"
         />
       </div>
-      <div className="mb-4">
-        <label>Nombre de portions :</label>
+
+      <div className="flex gap-4 mb-4">
         <input
           type="number"
           value={nbPortions}
-          onChange={(e) => setNbPortions(Number(e.target.value))}
-          className="border p-2 rounded w-full"
+          onChange={(e) => setNbPortions(e.target.value)}
+          className="border px-2 py-1"
         />
-      </div>
-      <div className="mb-4">
-        <label>Prix de vente :</label>
         <input
           type="number"
           value={prixVente}
-          onChange={(e) => setPrixVente(Number(e.target.value))}
-          className="border p-2 rounded w-full"
+          onChange={(e) => setPrixVente(e.target.value)}
+          className="border px-2 py-1"
         />
+        <button onClick={enregistrer} className="bg-blue-500 text-white px-4 py-1 rounded">
+          Enregistrer
+        </button>
       </div>
-      <div className="mb-4">
-        <h3 className="font-semibold">Produits disponibles</h3>
-        <div className="flex flex-wrap gap-2">
+
+      <div className="flex gap-2 mb-2">
+        <select
+          className="border px-2 py-1"
+          onChange={(e) => setProduitSelectionne(e.target.value)}
+        >
+          <option value="">-- Choisir un produit --</option>
           {produits.map((p) => (
-            <button
-              key={p.nom}
-              onClick={() => ajouterIngredient(p)}
-              className="bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded"
-            >
-              {p.nom}
-            </button>
+            <option key={p.id} value={p.id}>{p.nom}</option>
           ))}
-        </div>
+        </select>
+        <input
+          type="number"
+          value={quantite}
+          onChange={(e) => setQuantite(e.target.value)}
+          className="border px-2 py-1 w-24"
+        />
+        <button onClick={ajouterIngredient} className="bg-green-500 text-white px-4 py-1 rounded">
+          Ajouter
+        </button>
       </div>
-      <div className="mb-4">
-        <h3 className="font-semibold">Ingrédients de la fiche</h3>
-        <ul className="space-y-2">
-          {ingredients.map((ing, index) => (
-            <li key={index} className="flex items-center gap-2">
-              <span className="flex-1">{ing.nom}</span>
-              <input
-                type="number"
-                value={ing.quantite}
-                onChange={(e) => modifierQuantite(index, Number(e.target.value))}
-                className="border p-1 rounded w-20"
-              />
-              <span>{ing.unite}</span>
-              <button
-                onClick={() => supprimerIngredient(index)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Supprimer
-              </button>
-            </li>
+
+      <table className="w-full border mt-4">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border px-2 py-1">Produit</th>
+            <th className="border px-2 py-1">Quantité</th>
+            <th className="border px-2 py-1">Unité</th>
+            <th className="border px-2 py-1">PU</th>
+            <th className="border px-2 py-1">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {ingredients.map((ing, i) => (
+            <tr key={i}>
+              <td className="border px-2 py-1">{ing.nom}</td>
+              <td className="border px-2 py-1">
+                <input
+                  type="number"
+                  value={ing.quantite}
+                  onChange={(e) => modifierQuantite(i, e.target.value)}
+                  className="w-20 border px-1"
+                />
+              </td>
+              <td className="border px-2 py-1">{ing.unite}</td>
+              <td className="border px-2 py-1">{ing.prix.toFixed(2)} €</td>
+              <td className="border px-2 py-1">{(ing.prix * ing.quantite).toFixed(2)} €</td>
+              <td className="border px-2 py-1 text-center">
+                <button onClick={() => supprimerIngredient(i)} className="text-red-600">🗑</button>
+              </td>
+            </tr>
           ))}
-        </ul>
-      </div>
-      <button
-        onClick={enregistrerFiche}
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-      >
-        Enregistrer la fiche
-      </button>
+        </tbody>
+      </table>
+
+      <div className="mt-4 font-bold">Coût total HT : {totalHT.toFixed(2)} €</div>
     </div>
   );
 }
