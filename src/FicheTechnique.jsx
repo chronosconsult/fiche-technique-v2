@@ -1,155 +1,147 @@
-import React, { useState, useEffect } from "react";
-import { useProduits } from "./hooks/useProduits";
-import { useFiches } from "./hooks/useFiches";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFiches } from "../hooks/useFiches";
+import { useProduits } from "../hooks/useProduits";
+import { supabase } from "../supabaseClient";
 
 export default function FicheTechnique() {
+  const navigate = useNavigate();
+  const { fiches, ajouterFiche } = useFiches();
+  const { produits } = useProduits();
+
+  const [ficheId, setFicheId] = useState(null);
   const [titre, setTitre] = useState("");
   const [nbPortions, setNbPortions] = useState(1);
   const [prixVente, setPrixVente] = useState(0);
   const [ingredients, setIngredients] = useState([]);
-  const { produits } = useProduits();
-  const { fiches, ajouterFiche } = useFiches();
-  const [ajout, setAjout] = useState({ filtre: "", produitId: "", quantite: "" });
 
   useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const titreFiche = params.get("fiche");
-  if (titreFiche && fiches.length > 0) {
-    const fiche = fiches.find(f => f.titre === titreFiche);
-    if (fiche) {
-      setTitre(fiche.titre);
-      setNbPortions(fiche.nbPortions);
-      setPrixVente(fiche.prixVente);
-      setIngredients(fiche.ingredients || []);
+    const params = new URLSearchParams(window.location.search);
+    const titreFiche = params.get("fiche");
+    if (titreFiche && fiches.length > 0) {
+      const fiche = fiches.find(f => f.titre === titreFiche);
+      if (fiche) {
+        setFicheId(fiche.id);
+        setTitre(fiche.titre);
+        setNbPortions(fiche.nbPortions);
+        setPrixVente(fiche.prixVente);
+        setIngredients(fiche.ingredients || []);
+      }
     }
-  }
-}, [fiches]);
+  }, [fiches]);
 
-
-  const ajouterIngredient = () => {
-    const produit = produits.find(p => p.id.toString() === ajout.produitId);
-    if (!produit || !ajout.quantite) return;
-    setIngredients([
-      ...ingredients,
-      { id: produit.id, quantite: parseFloat(ajout.quantite) }
-    ]);
-    setAjout({ filtre: "", produitId: "", quantite: "" });
+  const ajouterIngredient = (produit) => {
+    if (ingredients.find(i => i.nom === produit.nom)) return;
+    setIngredients([...ingredients, { ...produit, quantite: 1 }]);
   };
 
-  const enregistrerFiche = () => {
+  const modifierQuantite = (index, valeur) => {
+    const copie = [...ingredients];
+    copie[index].quantite = valeur;
+    setIngredients(copie);
+  };
+
+  const supprimerIngredient = (index) => {
+    const copie = [...ingredients];
+    copie.splice(index, 1);
+    setIngredients(copie);
+  };
+
+  const enregistrerFiche = async () => {
     if (!titre) return alert("Titre obligatoire");
     const fiche = { titre, nbPortions, prixVente, ingredients };
-    ajouterFiche(fiche);
-    alert("Fiche enregistrée.");
+
+    if (ficheId) {
+      const { error } = await supabase
+        .from('fiches')
+        .update(fiche)
+        .eq('id', ficheId);
+
+      if (error) {
+        console.error(error);
+        return alert("Erreur lors de la mise à jour.");
+      }
+
+      alert("Fiche mise à jour.");
+    } else {
+      await ajouterFiche(fiche);
+      alert("Fiche enregistrée.");
+    }
+    navigate("/liste-fiches");
   };
 
-  const ingredientsComplet = ingredients.map(ing => {
-    const produit = produits.find(p => p.id === ing.id);
-    return produit ? { ...produit, quantite: ing.quantite } : null;
-  }).filter(Boolean);
-
-const totalHT = ingredientsComplet.reduce(
-  (sum, ing) => sum + (ing.prixHT * ing.quantite * (ing.unite === "g" || ing.unite === "cl" ? 0.001 : 1)),
-  0
-);
-const totalTTC = totalHT * 1.1;
-const coutParPortionTTC = nbPortions > 0 ? totalTTC / nbPortions : 0;
-const margeTTC = prixVente > 0 ? ((prixVente - coutParPortionTTC) / prixVente) * 100 : 0;
-
-
-  const produitsFiltres = produits.filter(p =>
-    p.nom.toLowerCase().includes(ajout.filtre.toLowerCase())
-  ).sort((a, b) => a.nom.localeCompare(b.nom));
-
   return (
-    <div style={{ padding: 20, maxWidth: 1000, fontFamily: "Arial", backgroundColor: "#fdfdfc" }}>
-      <h2 style={{ borderBottom: "2px solid #444", color: "#2c3e50" }}>FICHE TECHNIQUE</h2>
-    <div style={{ marginBottom: "1rem" }}>
-      <a href="/fiche-technique">
-        <button>Nouvelle fiche technique</button>
-      </a>
-    </div>
-      <div style={{ display: "flex", gap: 20, marginBottom: 20 }}>
-        <label style={{ flex: 1 }}>Titre :<br />
-          <input style={{ width: '100%' }} value={titre} onChange={e => setTitre(e.target.value)} />
-        </label>
-        <label>Portions :<br />
-          <input type="number" value={nbPortions} onChange={e => setNbPortions(Number(e.target.value))} />
-        </label>
-        <label>Prix vente TTC :<br />
-          <input type="number" value={prixVente} onChange={e => setPrixVente(Number(e.target.value))} />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: 20 }}>
-        <button onClick={() => window.location.href = '/mercurial'} style={{ backgroundColor: "#27ae60", color: "white", padding: "6px 12px", marginRight: 10 }}>
-          Gérer le Mercurial
-        </button>
-        <button onClick={() => window.location.href = '/fiches'} style={{ backgroundColor: "#8e44ad", color: "white", padding: "6px 12px", marginRight: 10 }}>
-          Consulter les fiches techniques
-        </button>
-        <button onClick={enregistrerFiche} style={{ backgroundColor: "#2980b9", color: "white", padding: "6px 12px" }}>
-          Enregistrer la fiche
-        </button>
-      </div>
-
-      <h3 style={{ color: "#2c3e50" }}>Ajouter un ingrédient à la fiche</h3>
-      <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Fiche Technique</h2>
+      <div className="mb-4">
         <input
-          placeholder="Filtrer..."
-          value={ajout.filtre}
-          onChange={e => {
-            const lettre = e.target.value;
-            const premiersProduits = produits
-              .filter(p => p.nom.toLowerCase().startsWith(lettre.toLowerCase()))
-              .sort((a, b) => a.nom.localeCompare(b.nom));
-            setAjout({ ...ajout, filtre: lettre, produitId: premiersProduits[0]?.id?.toString() || "" });
-          }}
+          value={titre}
+          onChange={(e) => setTitre(e.target.value)}
+          placeholder="Titre de la fiche"
+          className="border p-2 rounded w-full"
         />
-        <select
-          value={ajout.produitId}
-          onChange={e => setAjout({ ...ajout, produitId: e.target.value })}
-        >
-          <option value="">Choisir produit</option>
-          {produitsFiltres.map(p => (
-            <option key={p.id} value={p.id}>{p.nom} ({p.unite}) - {p.prixHT} €</option>
-          ))}
-        </select>
-        <input type="number" placeholder="Quantité" value={ajout.quantite} onChange={e => setAjout({ ...ajout, quantite: e.target.value })} />
-        <button onClick={ajouterIngredient} style={{ backgroundColor: "#2980b9", color: "white" }}>Ajouter</button>
       </div>
-
-      <table border="1" cellPadding="5" style={{ width: "100%", marginBottom: 20, backgroundColor: "#fff" }}>
-        <thead style={{ backgroundColor: "#ecf0f1" }}>
-          <tr>
-            <th>Produit</th>
-            <th>Quantité</th>
-            <th>Unité</th>
-            <th>PU HT</th>
-            <th>Total ligne</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ingredientsComplet.map((ing, idx) => (
-            <tr key={idx}>
-              <td>{ing.nom}</td>
-              <td>{ing.quantite}</td>
-              <td>{ing.unite}</td>
-              <td>{ing.prixHT.toFixed(2)} €</td>
-              <td>{(ing.quantite * ing.prixHT * (ing.unite === "g" || ing.unite === "cl" ? 0.001 : 1)).toFixed(2)} €</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div style={{ fontSize: 16, lineHeight: 1.8, backgroundColor: "#f8f9fa", padding: 10 }}>
-        <strong>Coût total HT :</strong> {totalHT.toFixed(2)} €<br />
-        <strong>Coût total TTC :</strong> {totalTTC.toFixed(2)} €<br />
-        <strong>Coût unitaire TTC / portion :</strong> {coutParPortionTTC.toFixed(2)} €<br />
-        <strong>Marge TTC :</strong> {margeTTC.toFixed(1)} %
-
+      <div className="mb-4">
+        <label>Nombre de portions :</label>
+        <input
+          type="number"
+          value={nbPortions}
+          onChange={(e) => setNbPortions(Number(e.target.value))}
+          className="border p-2 rounded w-full"
+        />
       </div>
+      <div className="mb-4">
+        <label>Prix de vente :</label>
+        <input
+          type="number"
+          value={prixVente}
+          onChange={(e) => setPrixVente(Number(e.target.value))}
+          className="border p-2 rounded w-full"
+        />
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold">Produits disponibles</h3>
+        <div className="flex flex-wrap gap-2">
+          {produits.map((p) => (
+            <button
+              key={p.nom}
+              onClick={() => ajouterIngredient(p)}
+              className="bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded"
+            >
+              {p.nom}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold">Ingrédients de la fiche</h3>
+        <ul className="space-y-2">
+          {ingredients.map((ing, index) => (
+            <li key={index} className="flex items-center gap-2">
+              <span className="flex-1">{ing.nom}</span>
+              <input
+                type="number"
+                value={ing.quantite}
+                onChange={(e) => modifierQuantite(index, Number(e.target.value))}
+                className="border p-1 rounded w-20"
+              />
+              <span>{ing.unite}</span>
+              <button
+                onClick={() => supprimerIngredient(index)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Supprimer
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        onClick={enregistrerFiche}
+        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+      >
+        Enregistrer la fiche
+      </button>
     </div>
   );
 }
