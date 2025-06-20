@@ -1,115 +1,84 @@
-import React, { useState } from "react";
-import { useProduits } from "./hooks/useProduits";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
 
 export default function Mercurial() {
-  const {
-    produits,
-    ajouterProduit,
-    modifierProduit,
-    supprimerProduit,
-    chargement,
-  } = useProduits();
+  const [produits, setProduits] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [nouveau, setNouveau] = useState({ nom: "", unite: "", prixHT: "" });
+  useEffect(() => {
+    fetchProduits();
+  }, []);
 
-  const handleAjouter = () => {
-  console.log("Ajout demandé :", nouveau);
-  if (!nouveau.nom || !nouveau.unite || !nouveau.prixHT) return;
-  const produit = {
-    nom: nouveau.nom,
-    unite: nouveau.unite,
-    prixHT: parseFloat(nouveau.prixHT),
-  };
-  ajouterProduit(produit);
-  setNouveau({ nom: "", unite: "", prixHT: "" });
-};
+  async function fetchProduits() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("produits")
+      .select("*")
+      .eq("user_id", supabase.auth.user().id)
+      .order("nom");
+    if (error) console.error(error);
+    else setProduits(data);
+    setLoading(false);
+  }
 
+  async function handleChange(id, field, value) {
+    setProduits((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
+    );
+    await supabase.from("produits").update({ [field]: value }).eq("id", id);
+  }
+
+  async function handleDelete(id) {
+    await supabase.from("produits").delete().eq("id", id);
+    setProduits((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  if (loading) return <p>Chargement…</p>;
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
-      <h2 style={{ borderBottom: "2px solid #444" }}>Mercurial</h2>
-
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-        <input
-          placeholder="Nom"
-          value={nouveau.nom}
-          onChange={(e) => setNouveau({ ...nouveau, nom: e.target.value })}
-        />
-        <input
-          placeholder="Unité"
-          value={nouveau.unite}
-          onChange={(e) => setNouveau({ ...nouveau, unite: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Prix HT"
-          value={nouveau.prixHT}
-          onChange={(e) => setNouveau({ ...nouveau, prixHT: e.target.value })}
-        />
-        <button onClick={handleAjouter} style={{ backgroundColor: "#2ecc71", color: "white" }}>
-          Ajouter
-        </button>
-      </div>
-
-      {chargement ? (
-        <p>Chargement...</p>
-      ) : (
-        <table border="1" cellPadding="5" style={{ width: "100%", backgroundColor: "#fff" }}>
-          <thead style={{ backgroundColor: "#ecf0f1" }}>
-            <tr>
-              <th>Nom</th>
-              <th>Unité</th>
-              <th>Prix HT</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {produits.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <input
-                    value={p.nom}
-                    onChange={(e) => modifierProduit(p.id, "nom", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    value={p.unite}
-                    onChange={(e) => modifierProduit(p.id, "unite", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={p.prixHT}
-                    onChange={(e) => modifierProduit(p.id, "prixHT", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <button
-                    onClick={() => supprimerProduit(p.id)}
-                    style={{ backgroundColor: "#e74c3c", color: "white" }}
-                  >
-                    🗑
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      <button
-        onClick={() => (window.location.href = "/")}
-        style={{
-          marginTop: 20,
-          backgroundColor: "#3498db",
-          color: "white",
-          padding: "6px 12px",
-        }}
-      >
-        Retour à la Fiche Technique
-      </button>
-    </div>
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr>
+          {["Nom", "Unité", "Prix HT", "Actions"].map((h) => (
+            <th key={h} style={{ borderBottom: "1px solid #ccc", padding: 8 }}>{h}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {produits.map((p) => (
+          <tr key={p.id}>
+            <td style={{ padding: 4 }}>
+              <input
+                value={p.nom}
+                onChange={(e) => handleChange(p.id, "nom", e.target.value)}
+              />
+            </td>
+            <td style={{ padding: 4, textAlign: "center" }}>
+              <input
+                value={p.unite}
+                onChange={(e) => handleChange(p.id, "unite", e.target.value)}
+              />
+            </td>
+            <td style={{ padding: 4, textAlign: "right" }}>
+              <input
+                type="number"
+                step="0.01"
+                value={p.prix}
+                onChange={(e) => handleChange(p.id, "prix", parseFloat(e.target.value))}
+                style={{ width: "80px", textAlign: "right" }}
+              />
+            </td>
+            <td style={{ padding: 4, textAlign: "center" }}>
+              <button
+                onClick={() => handleDelete(p.id)}
+                style={{ backgroundColor: "#e74c3c", color: "#fff", border: "none", padding: "4px 8px", borderRadius: 4, cursor: "pointer" }}
+              >
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
