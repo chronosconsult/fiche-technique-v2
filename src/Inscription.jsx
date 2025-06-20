@@ -18,6 +18,7 @@ export default function Inscription() {
         email,
         password: motDePasse,
       });
+      console.log("SIGNUP RESPONSE", data, error);
 
       if (error) {
         setErreur(error.message || "Erreur lors de l’inscription.");
