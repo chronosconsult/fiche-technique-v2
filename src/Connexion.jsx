@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 
 export default function Connexion() {
@@ -55,6 +55,10 @@ export default function Connexion() {
           Se connecter
         </button>
       </form>
+
+      <p style={{ textAlign: "center", marginTop: 20, fontSize: 14 }}>
+        Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
+      </p>
     </div>
   );
 }
