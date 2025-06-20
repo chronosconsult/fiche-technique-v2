@@ -5,30 +5,32 @@ import { useNavigate } from "react-router-dom";
 export default function Mercurial() {
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProduits = async () => {
-      setLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUserId(user.id);
+        fetchProduits(user.id);
+      } else {
         setProduits([]);
         setLoading(false);
-        return;
       }
-      const { data, error } = await supabase
-        .from("produits")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("nom");
-      if (error) console.error(error);
-      else setProduits(data);
-      setLoading(false);
-    };
-    fetchProduits();
+    });
   }, []);
+
+  async function fetchProduits(uid) {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("produits")
+      .select("*")
+      .eq("user_id", uid)
+      .order("nom");
+    if (error) console.error(error);
+    else setProduits(data);
+    setLoading(false);
+  }
 
   async function handleChange(id, field, value) {
     setProduits((prev) =>
