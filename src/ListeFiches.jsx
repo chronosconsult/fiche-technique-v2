@@ -1,6 +1,7 @@
+// src/ListeFiches.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "./supabaseClient.js";
+import supabase from "./supabaseClient";
 
 export default function ListeFiches() {
   const [fiches, setFiches] = useState([]);
@@ -22,18 +23,6 @@ export default function ListeFiches() {
     chargerFiches();
   }, []);
 
-  const supprimerFiche = async (id) => {
-    if (!window.confirm("Supprimer cette fiche ?")) return;
-
-    const { error } = await supabase.from("fiches").delete().eq("id", id);
-    if (error) {
-      console.error("Erreur suppression:", error);
-      alert("Erreur lors de la suppression.");
-    } else {
-      setFiches(fiches.filter((fiche) => fiche.id !== id));
-    }
-  };
-
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Fiches Techniques</h2>
@@ -47,20 +36,10 @@ export default function ListeFiches() {
         {fiches.map((fiche) => (
           <li
             key={fiche.id}
-            className="flex justify-between items-center bg-white border rounded p-2"
+            className="bg-white border rounded p-2 cursor-pointer hover:bg-gray-50"
+            onClick={() => navigate(`/fiche?id=${fiche.id}`)}
           >
-            <span
-              className="cursor-pointer text-blue-600 hover:underline"
-              onClick={() => navigate(`/fiche?id=${fiche.id}`)}
-            >
-              {fiche.titre}
-            </span>
-            <button
-              onClick={() => supprimerFiche(fiche.id)}
-              className="text-red-600 hover:text-red-800"
-            >
-              Supprimer
-            </button>
+            {fiche.titre}
           </li>
         ))}
       </ul>
