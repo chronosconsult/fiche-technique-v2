@@ -14,24 +14,22 @@ export default function Inscription() {
     setErreur("");
 
     try {
-      // Étape 1 : inscription
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password: motDePasse,
       });
 
-      if (signUpError) {
-        setErreur(signUpError.message || "Erreur lors de l’inscription.");
+      if (error) {
+        setErreur(error.message || "Erreur lors de l’inscription.");
         return;
       }
 
-      const user = signUpData?.user;
+      const user = data.user || data.session?.user;
       if (!user) {
-        setErreur("Inscription réussie, mais utilisateur non disponible.");
+        setErreur("Utilisateur introuvable après l'inscription.");
         return;
       }
 
-      // Étape 2 : insertion dans profils
       const { error: insertError } = await supabase.from("profils").insert([
         {
           id: user.id,
@@ -41,7 +39,7 @@ export default function Inscription() {
       ]);
 
       if (insertError) {
-        setErreur("Erreur lors de la création du profil.");
+        setErreur("Profil non enregistré : " + insertError.message);
         return;
       }
 
