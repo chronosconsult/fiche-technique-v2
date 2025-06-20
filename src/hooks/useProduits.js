@@ -1,31 +1,31 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
 
 export function useProduits() {
   const [produits, setProduits] = useState([]);
-  const [chargement, setChargement] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [erreur, setErreur] = useState(null);
 
   useEffect(() => {
     async function chargerProduits() {
-      setChargement(true);
-      setErreur(null);
-      const { data, error } = await supabase
-        .from('produits')
-        .select('*')
-        .order('nom', { ascending: true });
-
-      if (error) {
-        setErreur('Erreur lors du chargement des produits');
+      try {
+        const { data, error } = await supabase.from("produits").select("*");
+        if (error) {
+          setErreur(error.message);
+          setProduits([]);
+        } else {
+          setProduits(data || []);
+        }
+      } catch (err) {
+        setErreur("Erreur chargement produits : " + err.message);
         setProduits([]);
-      } else {
-        setProduits(data);
+      } finally {
+        setLoading(false);
       }
-      setChargement(false);
     }
 
     chargerProduits();
   }, []);
 
-  return { produits, chargement, erreur };
+  return { produits, loading, erreur };
 }
