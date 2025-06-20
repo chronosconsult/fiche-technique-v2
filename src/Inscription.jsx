@@ -13,35 +13,42 @@ export default function Inscription() {
     e.preventDefault();
     setErreur("");
 
-    // Étape 1 : création du compte
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: motDePasse,
-    });
+    try {
+      // Étape 1 : inscription
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password: motDePasse,
+      });
 
-    if (signUpError) {
-      setErreur(signUpError.message || "Erreur lors de l’inscription");
-      return;
+      if (signUpError) {
+        setErreur(signUpError.message || "Erreur lors de l’inscription.");
+        return;
+      }
+
+      const user = signUpData?.user;
+      if (!user) {
+        setErreur("Inscription réussie, mais utilisateur non disponible.");
+        return;
+      }
+
+      // Étape 2 : insertion dans profils
+      const { error: insertError } = await supabase.from("profils").insert([
+        {
+          id: user.id,
+          nom: nom,
+          trial_start: new Date(),
+        },
+      ]);
+
+      if (insertError) {
+        setErreur("Erreur lors de la création du profil.");
+        return;
+      }
+
+      navigate("/");
+    } catch (err) {
+      setErreur("Erreur inattendue : " + err.message);
     }
-
-    const user = signUpData.user;
-
-    // Étape 2 : insertion dans la table profils
-    const { error: insertError } = await supabase.from("profils").insert([
-      {
-        id: user.id,
-        nom: nom,
-        trial_start: new Date(),
-      },
-    ]);
-
-    if (insertError) {
-      setErreur("Compte créé, mais erreur lors de la création du profil.");
-      return;
-    }
-
-    // Redirection
-    navigate("/");
   }
 
   return (
