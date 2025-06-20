@@ -29,15 +29,29 @@ export default function Inscription() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: "2rem auto", fontFamily: "Arial" }}>
-      <h2>Créer un compte</h2>
-      <form onSubmit={handleInscription}>
+    <div style={{
+      maxWidth: 420,
+      margin: "3rem auto",
+      padding: 30,
+      border: "1px solid #ddd",
+      borderRadius: 8,
+      boxShadow: "0 0 10px rgba(0,0,0,0.05)",
+      fontFamily: "Arial",
+      backgroundColor: "#fff"
+    }}>
+      <h2 style={{ textAlign: "center", color: "#2c3e50", marginBottom: 10 }}>Créer un compte</h2>
+      <p style={{ textAlign: "center", fontSize: 14, color: "#555", marginBottom: 20 }}>
+        Accédez gratuitement à l'application pendant 30 jours.
+      </p>
+
+      <form onSubmit={handleInscription} style={{ display: "flex", flexDirection: "column", gap: 15 }}>
         <div>
           <label>Nom d’utilisateur</label>
           <input
             required
             value={nom}
             onChange={(e) => setNom(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 4 }}
           />
         </div>
         <div>
@@ -47,6 +61,7 @@ export default function Inscription() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 4 }}
           />
         </div>
         <div>
@@ -56,10 +71,21 @@ export default function Inscription() {
             required
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 4 }}
           />
         </div>
-        {erreur && <p style={{ color: "red" }}>{erreur}</p>}
-        <button type="submit">Créer un compte</button>
+        {erreur && <p style={{ color: "red", fontSize: 14 }}>{erreur}</p>}
+        <button type="submit" style={{
+          backgroundColor: "#2ecc71",
+          color: "white",
+          padding: "10px 0",
+          fontWeight: "bold",
+          border: "none",
+          borderRadius: 4,
+          cursor: "pointer"
+        }}>
+          Créer mon compte gratuit
+        </button>
       </form>
     </div>
   );
