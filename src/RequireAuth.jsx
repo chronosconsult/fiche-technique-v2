@@ -6,6 +6,7 @@ export default function RequireAuth({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [trialExpired, setTrialExpired] = useState(false);
+  const [joursRestants, setJoursRestants] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,9 +37,10 @@ export default function RequireAuth({ children }) {
       const startDate = new Date(profil.trial_start);
       const now = new Date();
       const diff = now.getTime() - startDate.getTime();
-      const jours = diff / (1000 * 60 * 60 * 24);
+      const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-      setTrialExpired(jours > 30);
+      setJoursRestants(30 - jours);
+      setTrialExpired(jours >= 30);
       setLoading(false);
     };
 
@@ -56,5 +58,14 @@ export default function RequireAuth({ children }) {
       </div>
     );
 
-  return children;
+  return (
+    <div>
+      {joursRestants !== null && (
+        <div style={{ background: "#f1c40f", padding: 10, textAlign: "center", fontWeight: "bold" }}>
+          Il vous reste {joursRestants} jour{joursRestants === 1 ? "" : "s"} d’essai gratuit
+        </div>
+      )}
+      {children}
+    </div>
+  );
 }
