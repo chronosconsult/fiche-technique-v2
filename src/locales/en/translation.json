@@ -1,0 +1,88 @@
+{
+  "menu": {
+    "accueil": "Home",
+    "mercurial": "Price List",
+    "deconnexion": "Logout",
+    "connexion": "Login",
+    "inscription": "Sign Up"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Log in",
+    "no_account": "No account yet?",
+    "create_account": "Create an account"
+  },
+  "signup": {
+    "title": "Create an account",
+    "submit": "Sign up",
+    "success": "Registration successful! You can now log in."
+  },
+  "errors": {
+    "login_failed": "Login failed",
+    "signup_failed": "Signup error",
+    "non_connecte": "User not logged in",
+    "erreur_enregistrement": "Error during save",
+    "titre_obligatoire": "Title is required"
+  },
+  "liste": {
+    "title": "Recipe Sheets",
+    "new": "New recipe sheet",
+    "aucune": "No sheets saved yet."
+  },
+  "fiche": {
+    "title": "Recipe Sheet",
+    "fields": {
+      "titre": "Title",
+      "portions": "Servings",
+      "prix_vente": "Selling price"
+    },
+    "ajout": {
+      "title": "Add an ingredient",
+      "filtrer": "Filter",
+      "choisir": "Choose",
+      "quantite": "Quantity"
+    },
+    "buttons": {
+      "ajouter": "Add",
+      "enregistrer": "Save",
+      "gerer_mercurial": "Manage price list"
+    },
+    "table": {
+      "produit": "Product",
+      "quantite": "Quantity",
+      "unite": "Unit",
+      "pu": "Unit price",
+      "total": "Total"
+    },
+    "recap": {
+      "total": "Total cost excl. VAT",
+      "unitaire": "Cost per serving",
+      "marge": "Margin"
+    },
+    "messages": {
+      "titre_obligatoire": "Title is required",
+      "non_connecte": "User not logged in",
+      "erreur_enregistrement": "Error during save",
+      "fiche_enregistree": "Sheet saved successfully"
+    }
+  },
+  "mercurial": {
+    "title": "Price List",
+    "fields": {
+      "nom": "Name",
+      "prix": "Price",
+      "piece": "Piece"
+    },
+    "boutons": {
+      "ajouter": "Add a product"
+    },
+    "table": {
+      "nom": "Name",
+      "unite": "Unit",
+      "prixht": "Price excl. VAT",
+      "actions": "Actions"
+    }
+  }
+}
