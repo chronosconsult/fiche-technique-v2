@@ -1,69 +1,42 @@
+import produitsFR from '../data/produitsFr';
+import produitsEN from '../data/produitsEn';
+import produitsES from '../data/produitsEs';
 import { supabase } from '../supabaseClient';
 
-export async function initProduits(userId, langue = 'fr') {
-  const { data: existing, error: existingError } = await supabase
+export async function initProduits(userId, langue) {
+  // 1. Vérifie s’il a déjà des produits
+  const { data: existants, error: err1 } = await supabase
     .from('produits')
     .select('id')
     .eq('user_id', userId);
 
-  if (existingError) {
-    console.error('Erreur vérification produits utilisateur :', existingError);
-    return;
-  }
+  if (err1) throw err1;
+  if (existants && existants.length > 0) return;
 
-  if (existing.length > 0) {
-    console.log('Produits déjà initialisés pour cet utilisateur.');
-    return;
-  }
-
+  // 2. Choix du jeu de données
   let produitsSource;
-  try {
-    switch (langue) {
-      case 'en':
-        produitsSource = await import('../data/produitsEn.js');
-        break;
-      case 'es':
-        produitsSource = await import('../data/produitsEs.js');
-        break;
-      default:
-        produitsSource = await import('../data/produitsFr.js');
-    }
-  } catch (e) {
-    console.error('Erreur chargement fichier produits :', e);
-    return;
+  switch (langue?.slice(0, 2)) {
+    case 'en':
+      produitsSource = produitsEN;
+      break;
+    case 'es':
+      produitsSource = produitsES;
+      break;
+    default:
+      produitsSource = produitsFR;
   }
 
-  const { data: profil, error: profilError } = await supabase
-    .from('profils')
-    .select('devise')
-    .eq('user_id', userId)
-    .single();
-
-  if (profilError) {
-    console.error('Erreur récupération profil utilisateur :', profilError);
-    return;
-  }
-
-  const deviseParDefaut = profil?.devise || 'EUR';
-
-  const produits = produitsSource.default.map((prod) => ({
+  // 3. Insertion dans la table `produits`
+  const lignes = produitsSource.map((p) => ({
     user_id: userId,
-    produit_standard_id: null,
-    nom: prod.nom,
-    prix: prod.prix,
-    devise: prod.devise || deviseParDefaut,
-    unite: prod.unite
+    nom: p.nom,
+    prixht: p.prix,
+    unite: p.unite,
   }));
 
-  const { error: insertError } = await supabase
+  const { error: err3 } = await supabase
     .from('produits')
-    .insert(produits);
+    .insert(lignes);
 
-  if (insertError) {
-    console.error('Erreur insertion produits utilisateur :', insertError);
-  } else {
-    console.log('Produits utilisateur initialisés.');
-  }
+  if (err3) throw err3;
 }
-
-export { initProduits as initialiserProduitsSiNecessaire };
