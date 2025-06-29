@@ -1,0 +1,88 @@
+{
+  "menu": {
+    "accueil": "Inicio",
+    "mercurial": "Mercurial",
+    "deconnexion": "Cerrar sesión",
+    "connexion": "Conexión",
+    "inscription": "Registrarse"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "no_account": "¿Aún no tienes una cuenta?",
+    "create_account": "Crear una cuenta"
+  },
+  "signup": {
+    "title": "Crear una cuenta",
+    "submit": "Registrarse",
+    "success": "¡Registro exitoso! Ya puede iniciar sesión."
+  },
+  "errors": {
+    "login_failed": "Error de inicio de sesión",
+    "signup_failed": "Error en el registro",
+    "non_connecte": "Usuario no conectado",
+    "erreur_enregistrement": "Error al guardar",
+    "titre_obligatoire": "El título es obligatorio"
+  },
+  "liste": {
+    "title": "Fichas Técnicas",
+    "new": "Nueva ficha técnica",
+    "aucune": "No hay fichas guardadas por ahora."
+  },
+  "fiche": {
+    "title": "Ficha Técnica",
+    "fields": {
+      "titre": "Título",
+      "portions": "Porciones",
+      "prix_vente": "Precio de venta"
+    },
+    "ajout": {
+      "title": "Agregar un ingrediente",
+      "filtrer": "Filtrar",
+      "choisir": "Elegir",
+      "quantite": "Cantidad"
+    },
+    "buttons": {
+      "ajouter": "Agregar",
+      "enregistrer": "Guardar",
+      "gerer_mercurial": "Gestionar mercurial"
+    },
+    "table": {
+      "produit": "Producto",
+      "quantite": "Cantidad",
+      "unite": "Unidad",
+      "pu": "Precio unitario",
+      "total": "Total"
+    },
+    "recap": {
+      "total": "Costo total sin IVA",
+      "unitaire": "Costo por porción",
+      "marge": "Margen"
+    },
+    "messages": {
+      "titre_obligatoire": "El título es obligatorio",
+      "non_connecte": "Usuario no conectado",
+      "erreur_enregistrement": "Error al guardar",
+      "fiche_enregistree": "Ficha guardada correctamente"
+    }
+  },
+  "mercurial": {
+    "title": "Mercurial",
+    "fields": {
+      "nom": "Nombre",
+      "prix": "Precio",
+      "piece": "Pieza"
+    },
+    "boutons": {
+      "ajouter": "Agregar un producto"
+    },
+    "table": {
+      "nom": "Nombre",
+      "unite": "Unidad",
+      "prixht": "Precio sin IVA",
+      "actions": "Acciones"
+    }
+  }
+}

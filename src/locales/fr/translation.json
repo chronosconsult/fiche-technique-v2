@@ -1,0 +1,88 @@
+{
+  "menu": {
+    "accueil": "Accueil",
+    "mercurial": "Mercurial",
+    "deconnexion": "Déconnexion",
+    "connexion": "Connexion",
+    "inscription": "Inscription"
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "no_account": "Pas encore de compte ?",
+    "create_account": "Créer un compte"
+  },
+  "signup": {
+    "title": "Créer un compte",
+    "submit": "S'inscrire",
+    "success": "Inscription réussie ! Vous pouvez vous connecter."
+  },
+  "errors": {
+    "login_failed": "Échec de la connexion",
+    "signup_failed": "Erreur à l'inscription",
+    "non_connecte": "Utilisateur non connecté",
+    "erreur_enregistrement": "Erreur lors de l'enregistrement",
+    "titre_obligatoire": "Le titre est obligatoire"
+  },
+  "liste": {
+    "title": "Fiches Techniques",
+    "new": "Nouvelle fiche technique",
+    "aucune": "Aucune fiche enregistrée pour l’instant."
+  },
+  "fiche": {
+    "title": "Fiche Technique",
+    "fields": {
+      "titre": "Titre",
+      "portions": "Portions",
+      "prix_vente": "Prix de vente"
+    },
+    "ajout": {
+      "title": "Ajouter un ingrédient",
+      "filtrer": "Filtrer",
+      "choisir": "Choisir",
+      "quantite": "Quantité"
+    },
+    "buttons": {
+      "ajouter": "Ajouter",
+      "enregistrer": "Enregistrer",
+      "gerer_mercurial": "Gérer le mercurial"
+    },
+    "table": {
+      "produit": "Produit",
+      "quantite": "Quantité",
+      "unite": "Unité",
+      "pu": "Prix unitaire",
+      "total": "Total"
+    },
+    "recap": {
+      "total": "Coût total HT",
+      "unitaire": "Coût par portion",
+      "marge": "Marge"
+    },
+    "messages": {
+      "titre_obligatoire": "Le titre est obligatoire",
+      "non_connecte": "Utilisateur non connecté",
+      "erreur_enregistrement": "Erreur lors de l'enregistrement",
+      "fiche_enregistree": "Fiche enregistrée avec succès"
+    }
+  },
+  "mercurial": {
+    "title": "Mercurial",
+    "fields": {
+      "nom": "Nom",
+      "prix": "Prix",
+      "piece": "Pièce"
+    },
+    "boutons": {
+      "ajouter": "Ajouter un produit"
+    },
+    "table": {
+      "nom": "Nom",
+      "unite": "Unité",
+      "prixht": "Prix HT",
+      "actions": "Actions"
+    }
+  }
+}
