@@ -1,77 +1,65 @@
 import React, { useState } from 'react';
-import supabase from './supabaseClient';
-import { useNavigate } from 'react-router-dom';
-import initProduits from './utils/initProduits';
+import { supabase } from './supabaseClient';
+import { initProduits } from './utils/initProduits';
 
-const Inscription = () => {
+function Inscription() {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
-  const [devise, setDevise] = useState('€');
-  const navigate = useNavigate();
+  const [message, setMessage] = useState('');
 
-  const handleInscription = async () => {
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: motDePasse
+  const handleInscription = async (e) => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: motDePasse,
     });
 
-    if (signUpError) {
-      console.error('Erreur à l\'inscription :', signUpError.message);
-      alert(`Erreur à l'inscription : ${signUpError.message}`);
+    if (error) {
+      setMessage(`Erreur lors de l'inscription : ${error.message}`);
       return;
     }
 
-    const user = signUpData.user;
-    if (!user) {
-      alert('Inscription réussie, mais utilisateur introuvable.');
-      return;
+    const user = data.user;
+
+    if (user && user.id) {
+      console.log('Utilisateur inscrit avec succès :', user.email);
+
+      // Détection de la langue navigateur
+      const langueNavigateur = navigator.language || 'fr';
+
+      // Initialisation des produits pour ce user
+      await initProduits(user.id, langueNavigateur);
+
+      setMessage("Inscription réussie. Produits chargés.");
+    } else {
+      setMessage("Inscription réussie, mais l'utilisateur n'est pas disponible.");
     }
-
-    // Insertion dans la table "profils"
-    const { error: profileError } = await supabase.from('profils').insert([
-      {
-        user_id: user.id,
-        email,
-        devise
-      }
-    ]);
-
-    if (profileError) {
-      console.error('Erreur lors de la création du profil :', profileError.message);
-      alert(`Erreur création profil : ${profileError.message}`);
-      return;
-    }
-
-    // Initialisation des produits une fois que le profil est bien en base
-    await initProduits(user.id, devise);
-
-    alert('Compte créé avec succès');
-    navigate('/connexion');
   };
 
   return (
-    <div className="container">
-      <h2>Créer un compte</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Mot de passe"
-        value={motDePasse}
-        onChange={(e) => setMotDePasse(e.target.value)}
-      />
-      <select value={devise} onChange={(e) => setDevise(e.target.value)}>
-        <option value="€">Euro (€)</option>
-        <option value="$">Dollar ($)</option>
-        <option value="£">Livre (£)</option>
-      </select>
-      <button onClick={handleInscription}>S'inscrire</button>
+    <div>
+      <h2>Inscription</h2>
+      <form onSubmit={handleInscription}>
+        <input
+          type="email"
+          placeholder="Adresse e-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={motDePasse}
+          onChange={(e) => setMotDePasse(e.target.value)}
+          required
+        />
+        <button type="submit">S'inscrire</button>
+      </form>
+      {message && <p>{message}</p>}
     </div>
   );
-};
+}
 
 export default Inscription;

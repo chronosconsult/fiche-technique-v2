@@ -1,42 +1,36 @@
-import produitsFR from '../data/produitsFr';
-import produitsEN from '../data/produitsEn';
-import produitsES from '../data/produitsEs';
 import { supabase } from '../supabaseClient';
 
-export async function initProduits(userId, langue) {
-  // 1. Vérifie s’il a déjà des produits
-  const { data: existants, error: err1 } = await supabase
-    .from('produits')
-    .select('id')
-    .eq('user_id', userId);
+const fichiersProduits = {
+  fr: '/data/ProduitsFR.json',
+  en: '/data/ProduitsEN.json',
+  es: '/data/ProduitsES.json',
+};
 
-  if (err1) throw err1;
-  if (existants && existants.length > 0) return;
+export async function initProduits(userId, langue = 'fr') {
+  try {
+    const langueCode = langue.toLowerCase().slice(0, 2); // Ex: 'fr', 'en', 'es'
+    const chemin = fichiersProduits[langueCode] || fichiersProduits.fr;
 
-  // 2. Choix du jeu de données
-  let produitsSource;
-  switch (langue?.slice(0, 2)) {
-    case 'en':
-      produitsSource = produitsEN;
-      break;
-    case 'es':
-      produitsSource = produitsES;
-      break;
-    default:
-      produitsSource = produitsFR;
+    const response = await fetch(chemin);
+    if (!response.ok) {
+      console.error(`Erreur lors du chargement des produits (${chemin})`);
+      return;
+    }
+
+    const produits = await response.json();
+    const produitsAvecUser = produits.map((produit) => ({
+      ...produit,
+      user_id: userId,
+    }));
+
+    const { error } = await supabase.from('produits').insert(produitsAvecUser);
+
+    if (error) {
+      console.error('Erreur lors de l’insertion dans Supabase :', error.message);
+    } else {
+      console.log('Produits initiaux insérés pour l’utilisateur :', userId);
+    }
+  } catch (err) {
+    console.error('Erreur générale dans initProduits :', err.message);
   }
-
-  // 3. Insertion dans la table `produits`
-  const lignes = produitsSource.map((p) => ({
-    user_id: userId,
-    nom: p.nom,
-    prixht: p.prix,
-    unite: p.unite,
-  }));
-
-  const { error: err3 } = await supabase
-    .from('produits')
-    .insert(lignes);
-
-  if (err3) throw err3;
 }
