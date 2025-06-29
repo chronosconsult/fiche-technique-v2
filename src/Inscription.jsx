@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
 import { useNavigate } from 'react-router-dom';
-import initProduits from '../utils/initProduits';
+import initProduits from './utils/initProduits';
 
 const Inscription = () => {
   const [email, setEmail] = useState('');
