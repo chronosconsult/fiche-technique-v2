@@ -2,28 +2,10 @@ import { supabase } from '../supabaseClient';
 
 export async function initProduits(userId, langue = 'fr') {
   try {
-    // On vérifie s’il y a déjà des produits pour cet utilisateur
-    const { data: produitsExistants, error: erreurSelect } = await supabase
-      .from('produits')
-      .select('id')
-      .eq('user_id', userId);
-
-    if (erreurSelect) {
-      console.error("Erreur lors de la vérification des produits existants :", erreurSelect.message);
-      return;
-    }
-
-    // Si des produits existent déjà, on ne fait rien
-    if (produitsExistants && produitsExistants.length > 0) {
-      console.log("Produits déjà présents pour cet utilisateur. Aucune insertion.");
-      return;
-    }
-
-    // Sinon, on charge le bon fichier de base
     const fichiers = {
-      fr: '/data/produitsFr.json',
-      en: '/data/produitsEn.json',
-      es: '/data/produitsEs.json',
+      fr: '/data/ProduitsFR.json',
+      en: '/data/ProduitsEN.json',
+      es: '/data/ProduitsES.json',
     };
 
     const urlFichier = fichiers[langue] || fichiers.fr;
@@ -36,7 +18,6 @@ export async function initProduits(userId, langue = 'fr') {
 
     const produits = await reponse.json();
 
-    // On ajoute l'user_id à chaque produit
     const produitsAvecUser = produits.map(produit => ({
       ...produit,
       user_id: userId,
@@ -49,7 +30,6 @@ export async function initProduits(userId, langue = 'fr') {
     } else {
       console.log('Produits insérés avec succès pour l’utilisateur', userId);
     }
-
   } catch (err) {
     console.error('Erreur dans initProduits :', err.message);
   }
