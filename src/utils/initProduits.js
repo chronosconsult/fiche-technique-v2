@@ -1,24 +1,24 @@
 import { supabase } from '../supabaseClient';
 
-const fichiersProduits = {
-  fr: '/data/ProduitsFR.json',
-  en: '/data/ProduitsEN.json',
-  es: '/data/ProduitsES.json',
-};
-
 export async function initProduits(userId, langue = 'fr') {
   try {
-    const langueCode = langue.toLowerCase().slice(0, 2); // Ex: 'fr', 'en', 'es'
-    const chemin = fichiersProduits[langueCode] || fichiersProduits.fr;
+    const fichiers = {
+      fr: '/data/ProduitsFR.json',
+      en: '/data/ProduitsEN.json',
+      es: '/data/ProduitsES.json',
+    };
 
-    const response = await fetch(chemin);
-    if (!response.ok) {
-      console.error(`Erreur lors du chargement des produits (${chemin})`);
+    const urlFichier = fichiers[langue] || fichiers.fr;
+    const reponse = await fetch(urlFichier);
+
+    if (!reponse.ok) {
+      console.error(`Échec du chargement du fichier produit : ${urlFichier}`);
       return;
     }
 
-    const produits = await response.json();
-    const produitsAvecUser = produits.map((produit) => ({
+    const produits = await reponse.json();
+
+    const produitsAvecUser = produits.map(produit => ({
       ...produit,
       user_id: userId,
     }));
@@ -28,9 +28,9 @@ export async function initProduits(userId, langue = 'fr') {
     if (error) {
       console.error('Erreur lors de l’insertion dans Supabase :', error.message);
     } else {
-      console.log('Produits initiaux insérés pour l’utilisateur :', userId);
+      console.log('Produits insérés avec succès pour l’utilisateur', userId);
     }
   } catch (err) {
-    console.error('Erreur générale dans initProduits :', err.message);
+    console.error('Erreur dans initProduits :', err.message);
   }
 }

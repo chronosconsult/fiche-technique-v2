@@ -1,0 +1,399 @@
+[
+  {
+    "nom": "Sel fin",
+    "unite": "kg",
+    "prix": 0.85
+  },
+  {
+    "nom": "Poivre noir",
+    "unite": "kg",
+    "prix": 24.0
+  },
+  {
+    "nom": "Sucre semoule",
+    "unite": "kg",
+    "prix": 1.2
+  },
+  {
+    "nom": "Farine de blé T55",
+    "unite": "kg",
+    "prix": 0.75
+  },
+  {
+    "nom": "Huile de tournesol",
+    "unite": "l",
+    "prix": 1.6
+  },
+  {
+    "nom": "Huile d'olive",
+    "unite": "l",
+    "prix": 5.5
+  },
+  {
+    "nom": "Beurre doux",
+    "unite": "kg",
+    "prix": 7.5
+  },
+  {
+    "nom": "Crème fraîche",
+    "unite": "l",
+    "prix": 3.8
+  },
+  {
+    "nom": "Lait entier",
+    "unite": "l",
+    "prix": 0.95
+  },
+  {
+    "nom": "Œufs entiers",
+    "unite": "pièce",
+    "prix": 0.2
+  },
+  {
+    "nom": "Levure chimique",
+    "unite": "kg",
+    "prix": 10.0
+  },
+  {
+    "nom": "Levure de boulanger",
+    "unite": "kg",
+    "prix": 8.0
+  },
+  {
+    "nom": "Bicarbonate de soude",
+    "unite": "kg",
+    "prix": 4.5
+  },
+  {
+    "nom": "Vinaigre blanc",
+    "unite": "l",
+    "prix": 0.8
+  },
+  {
+    "nom": "Vinaigre balsamique",
+    "unite": "l",
+    "prix": 3.5
+  },
+  {
+    "nom": "Riz long grain",
+    "unite": "kg",
+    "prix": 1.5
+  },
+  {
+    "nom": "Pâtes spaghetti",
+    "unite": "kg",
+    "prix": 1.3
+  },
+  {
+    "nom": "Lentilles vertes",
+    "unite": "kg",
+    "prix": 2.1
+  },
+  {
+    "nom": "Pois chiches",
+    "unite": "kg",
+    "prix": 2.0
+  },
+  {
+    "nom": "Haricots rouges",
+    "unite": "kg",
+    "prix": 2.2
+  },
+  {
+    "nom": "Tomates pelées",
+    "unite": "boîte",
+    "prix": 0.95
+  },
+  {
+    "nom": "Concentré de tomate",
+    "unite": "boîte",
+    "prix": 1.0
+  },
+  {
+    "nom": "Maïs doux",
+    "unite": "boîte",
+    "prix": 0.9
+  },
+  {
+    "nom": "Champignons de Paris",
+    "unite": "kg",
+    "prix": 3.2
+  },
+  {
+    "nom": "Carottes",
+    "unite": "kg",
+    "prix": 1.0
+  },
+  {
+    "nom": "Pommes de terre",
+    "unite": "kg",
+    "prix": 0.85
+  },
+  {
+    "nom": "Oignons jaunes",
+    "unite": "kg",
+    "prix": 1.1
+  },
+  {
+    "nom": "Ail",
+    "unite": "kg",
+    "prix": 4.0
+  },
+  {
+    "nom": "Poireaux",
+    "unite": "kg",
+    "prix": 2.3
+  },
+  {
+    "nom": "Courgettes",
+    "unite": "kg",
+    "prix": 2.5
+  },
+  {
+    "nom": "Aubergines",
+    "unite": "kg",
+    "prix": 2.8
+  },
+  {
+    "nom": "Poivrons rouges",
+    "unite": "kg",
+    "prix": 3.0
+  },
+  {
+    "nom": "Concombres",
+    "unite": "kg",
+    "prix": 1.7
+  },
+  {
+    "nom": "Salade verte",
+    "unite": "pièce",
+    "prix": 1.0
+  },
+  {
+    "nom": "Pommes",
+    "unite": "kg",
+    "prix": 2.2
+  },
+  {
+    "nom": "Bananes",
+    "unite": "kg",
+    "prix": 1.8
+  },
+  {
+    "nom": "Oranges",
+    "unite": "kg",
+    "prix": 2.0
+  },
+  {
+    "nom": "Citron",
+    "unite": "kg",
+    "prix": 2.5
+  },
+  {
+    "nom": "Yaourt nature",
+    "unite": "pièce",
+    "prix": 0.4
+  },
+  {
+    "nom": "Fromage râpé",
+    "unite": "kg",
+    "prix": 8.0
+  },
+  ,
+  {
+    "nom": "Emmental",
+    "unite": "kg",
+    "prix": 9.5
+  },
+  {
+    "nom": "Jambon blanc",
+    "unite": "kg",
+    "prix": 12.0
+  },
+  {
+    "nom": "Lardons fumés",
+    "unite": "kg",
+    "prix": 10.0
+  },
+  {
+    "nom": "Filet de poulet",
+    "unite": "kg",
+    "prix": 8.5
+  },
+  {
+    "nom": "Escalope de dinde",
+    "unite": "kg",
+    "prix": 9.0
+  },
+  {
+    "nom": "Saucisse de Toulouse",
+    "unite": "kg",
+    "prix": 7.5
+  },
+  {
+    "nom": "Bœuf haché",
+    "unite": "kg",
+    "prix": 11.0
+  },
+  {
+    "nom": "Steak de bœuf",
+    "unite": "kg",
+    "prix": 15.0
+  },
+  {
+    "nom": "Côte de porc",
+    "unite": "kg",
+    "prix": 9.5
+  },
+  {
+    "nom": "Pavé de saumon",
+    "unite": "kg",
+    "prix": 18.0
+  },
+  {
+    "nom": "Filet de cabillaud",
+    "unite": "kg",
+    "prix": 16.0
+  },
+  {
+    "nom": "Thon en boîte",
+    "unite": "boîte",
+    "prix": 1.5
+  },
+  {
+    "nom": "Sardines à l'huile",
+    "unite": "boîte",
+    "prix": 1.2
+  },
+  {
+    "nom": "Pain de mie",
+    "unite": "pièce",
+    "prix": 1.4
+  },
+  {
+    "nom": "Baguette",
+    "unite": "pièce",
+    "prix": 0.9
+  },
+  {
+    "nom": "Brioche",
+    "unite": "pièce",
+    "prix": 2.2
+  },
+  {
+    "nom": "Chocolat noir",
+    "unite": "kg",
+    "prix": 6.0
+  },
+  {
+    "nom": "Chocolat au lait",
+    "unite": "kg",
+    "prix": 5.8
+  },
+  {
+    "nom": "Vanille en poudre",
+    "unite": "kg",
+    "prix": 90.0
+  },
+  {
+    "nom": "Cannelle",
+    "unite": "kg",
+    "prix": 25.0
+  },
+  {
+    "nom": "Curry",
+    "unite": "kg",
+    "prix": 20.0
+  },
+  {
+    "nom": "Paprika",
+    "unite": "kg",
+    "prix": 19.0
+  },
+  {
+    "nom": "Herbes de Provence",
+    "unite": "kg",
+    "prix": 15.0
+  },
+  {
+    "nom": "Bouillon de volaille",
+    "unite": "kg",
+    "prix": 12.0
+  },
+  {
+    "nom": "Bouillon de légumes",
+    "unite": "kg",
+    "prix": 10.0
+  },
+  {
+    "nom": "Eau plate",
+    "unite": "l",
+    "prix": 0.5
+  },
+  {
+    "nom": "Eau gazeuse",
+    "unite": "l",
+    "prix": 0.8
+  },
+  {
+    "nom": "Jus d'orange",
+    "unite": "l",
+    "prix": 2.0
+  },
+  {
+    "nom": "Jus de pomme",
+    "unite": "l",
+    "prix": 1.8
+  },
+  {
+    "nom": "Café moulu",
+    "unite": "kg",
+    "prix": 14.0
+  },
+  {
+    "nom": "Thé vert",
+    "unite": "kg",
+    "prix": 30.0
+  },
+  {
+    "nom": "Cacao en poudre",
+    "unite": "kg",
+    "prix": 7.0
+  },
+  {
+    "nom": "Miel",
+    "unite": "kg",
+    "prix": 9.0
+  },
+  {
+    "nom": "Confiture de fraise",
+    "unite": "kg",
+    "prix": 4.5
+  },
+  {
+    "nom": "Pâte à tartiner",
+    "unite": "kg",
+    "prix": 5.5
+  },
+  {
+    "nom": "Cornichons",
+    "unite": "kg",
+    "prix": 3.0
+  },
+  {
+    "nom": "Moutarde",
+    "unite": "kg",
+    "prix": 3.2
+  },
+  {
+    "nom": "Mayonnaise",
+    "unite": "kg",
+    "prix": 2.8
+  },
+  {
+    "nom": "Ketchup",
+    "unite": "kg",
+    "prix": 2.5
+  }
+]
+
