@@ -106,7 +106,7 @@ export default function FicheTechnique() {
   };
 
   const totalHT = ingredientsComplet.reduce(
-    (sum, ing) => sum + ing.prixht * convertirQuantite(ing.quantite, ing.unite),
+    (sum, ing) => sum + ing.prix * convertirQuantite(ing.quantite, ing.unite),
     0
   );
 
@@ -192,7 +192,7 @@ export default function FicheTechnique() {
           <option value="">{t("fiche.ajout.choisir")}</option>
           {produitsFiltres.map(p => (
             <option key={p.id} value={p.id}>
-              {p.nom} ({p.unite}) - {formater.format(p.prixht)}
+              {p.nom} ({p.unite}) - {formater.format(p.prix)}
             </option>
           ))}
         </select>
@@ -220,13 +220,13 @@ export default function FicheTechnique() {
         </thead>
         <tbody>
           {ingredientsComplet.map((ing, idx) => {
-            const total = convertirQuantite(ing.quantite, ing.unite) * ing.prixht;
+            const total = convertirQuantite(ing.quantite, ing.unite) * ing.prix;
             return (
               <tr key={idx}>
                 <td className="border px-4 py-2">{ing.nom}</td>
                 <td className="border px-4 py-2">{ing.quantite}</td>
                 <td className="border px-4 py-2">{ing.unite}</td>
-                <td className="border px-4 py-2">{formater.format(ing.prixht)}</td>
+                <td className="border px-4 py-2">{formater.format(ing.prix)}</td>
                 <td className="border px-4 py-2">{formater.format(total)}</td>
               </tr>
             );

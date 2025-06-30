@@ -11,7 +11,7 @@ export default function Mercurial() {
   const [userId, setUserId] = useState(null);
   const { devise } = useDevise();
 
-  const [nouveauProduit, setNouveauProduit] = useState({ nom: "", unite: "kg", prixht: "" });
+  const [nouveauProduit, setNouveauProduit] = useState({ nom: "", unite: "kg", prix: "" });
 
   useEffect(() => {
     async function charger() {
@@ -67,7 +67,7 @@ export default function Mercurial() {
     const produit = {
       nom: nouveauProduit.nom,
       unite: nouveauProduit.unite,
-      prixht: parseFloat(nouveauProduit.prixht || 0),
+      prix: parseFloat(nouveauProduit.prix || 0),
       user_id: userId
     };
     const { data, error } = await supabase
@@ -78,7 +78,7 @@ export default function Mercurial() {
 
     if (!error && data) {
       setProduits(prev => [...prev, data].sort((a, b) => a.nom.localeCompare(b.nom)));
-      setNouveauProduit({ nom: "", unite: "kg", prixht: "" });
+      setNouveauProduit({ nom: "", unite: "kg", prix: "" });
     }
   };
 
@@ -105,7 +105,7 @@ export default function Mercurial() {
           <tr>
             <th className="border px-4 py-2 text-left">{t("mercurial.table.nom")}</th>
             <th className="border px-4 py-2 text-left">{t("mercurial.table.unite")}</th>
-            <th className="border px-4 py-2 text-left">{t("mercurial.table.prixht")}</th>
+            <th className="border px-4 py-2 text-left">{t("mercurial.table.prix")}</th>
             <th className="border px-4 py-2 text-center">{t("mercurial.table.actions")}</th>
           </tr>
         </thead>
@@ -135,11 +135,11 @@ export default function Mercurial() {
                 type="number"
                 step="0.01"
                 className="w-full border rounded px-2 py-1"
-                value={nouveauProduit.prixht}
-                onChange={(e) => setNouveauProduit({ ...nouveauProduit, prixht: e.target.value })}
+                value={nouveauProduit.prix}
+                onChange={(e) => setNouveauProduit({ ...nouveauProduit, prix: e.target.value })}
               />
               <div className="text-sm text-gray-500 italic">
-                {formater.format(parseFloat(nouveauProduit.prixht || 0))}
+                {formater.format(parseFloat(nouveauProduit.prix || 0))}
               </div>
             </td>
             <td className="border px-4 py-2 text-center text-sm italic text-gray-400">
@@ -167,11 +167,11 @@ export default function Mercurial() {
                 <input
                   type="number"
                   className="w-full border rounded px-2 py-1 mb-1"
-                  value={p.prixht ?? 0}
-                  onChange={(e) => modifierProduit(p.id, "prixht", parseFloat(e.target.value))}
+                  value={p.prix ?? 0}
+                  onChange={(e) => modifierProduit(p.id, "prix", parseFloat(e.target.value))}
                 />
                 <div className="text-sm text-gray-500 italic">
-                  {formater.format(p.prixht || 0)}
+                  {formater.format(p.prix || 0)}
                 </div>
               </td>
               <td className="border px-4 py-2 text-center">
