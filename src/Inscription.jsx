@@ -15,36 +15,43 @@ export default function Inscription() {
   useEffect(() => {}, [i18n.language]);
 
   async function inscrire() {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: motDePasse,
-    });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: motDePasse,
+  });
 
-    if (error) {
-      alert(t("errors.signup_failed") + " : " + error.message);
-      return;
-    }
-
-    const user = data?.user;
-    if (!user) {
-      alert(t("errors.signup_failed"));
-      return;
-    }
-
-    // Création du profil avec user.id
-    await supabase.from("profils").insert({
-      user_id: user.id,
-      nom: email,
-      trial_start: new Date().toISOString(),
-      devise: devise,
-    });
-
-    // Chargement des 100 produits initiaux selon la langue du navigateur
-    await initProduits(user.id, i18n.language);
-
-    alert(t("signup.success"));
-    navigate("/connexion");
+  if (error) {
+    alert(t("errors.signup_failed") + " : " + error.message);
+    return;
   }
+
+  const user = data?.user;
+  if (!user) {
+    alert(t("errors.signup_failed"));
+    return;
+  }
+
+  // Étape 1 : création du profil
+  const { error: profilError } = await supabase.from("profils").insert({
+    user_id: user.id,
+    nom: email,
+    trial_start: new Date().toISOString(),
+    devise: devise,
+  });
+
+  if (profilError) {
+    console.error("Erreur insertion profil :", profilError.message);
+    alert("Échec lors de la création du profil : " + profilError.message);
+    return;
+  }
+
+  // Étape 2 : seulement si profil inséré, on initialise les produits
+  await initProduits(user.id, i18n.language);
+
+  alert(t("signup.success"));
+  navigate("/connexion");
+}
+
 
   return (
     <div className="p-4 max-w-md mx-auto">
