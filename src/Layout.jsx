@@ -1,4 +1,3 @@
-// Layout.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -37,7 +36,15 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gray-100 text-gray-800 font-sans">
       <header className="bg-white shadow-sm p-4 mb-6">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">{t("menu.accueil")}</h1>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/paiement")}
+              className="bg-red-600 text-white px-4 py-2 rounded"
+            >
+              {t("menu.paiement")}
+            </button>
+            <h1 className="text-2xl font-bold">{t("menu.accueil")}</h1>
+          </div>
           <div className="space-x-2 flex items-center">
             <LanguageSelector />
             <button onClick={() => navigate("/")} className="bg-blue-600 text-white px-4 py-2 rounded">
@@ -46,7 +53,6 @@ export default function Layout({ children }) {
             <button onClick={() => navigate("/mercurial")} className="bg-green-600 text-white px-4 py-2 rounded">
               {t("menu.mercurial")}
             </button>
-
             {user ? (
               <button
                 className="bg-gray-700 text-white px-4 py-2 rounded"
