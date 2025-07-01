@@ -3,7 +3,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/button";
 
 // Initialisation de Stripe avec la clé publique (production)
-const stripePromise = loadStripe("pk_live_51Rg3yzKjn3k9Hmh5u5p0ERQB5nbmuBc0mXuOYenYrBvEi2jXa8sNhU6dUskAiYtqTxBTHx66UmNfRDYoCByqbztp00R2wpjJ9q");
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
 
 export default function Paiement() {
   const handleClick = async () => {
