@@ -81,7 +81,7 @@
     "table": {
       "nom": "Name",
       "unite": "Unit",
-      "prixht": "Price excl. VAT",
+      "prix": "Price",
       "actions": "Actions"
     }
   }

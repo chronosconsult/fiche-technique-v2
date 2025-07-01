@@ -81,7 +81,7 @@
     "table": {
       "nom": "Nom",
       "unite": "Unité",
-      "prixht": "Prix HT",
+      "prix": "Prix",
       "actions": "Actions"
     }
   }
