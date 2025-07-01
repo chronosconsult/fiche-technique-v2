@@ -1,74 +1,92 @@
-// ListeFiches.jsx
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { supabase } from "./supabaseClient";
+import { createClient } from "@supabase/supabase-js";
 import { Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 export default function ListeFiches() {
-  const { t, i18n } = useTranslation();
-  const [fiches, setFiches] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {}, [i18n.language]);
+  const [user, setUser] = useState(null);
+  const [fiches, setFiches] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const chargerFiches = async () => {
-      const { data, error } = await supabase
-        .from("fiches")
-        .select("id, titre");
-
-      if (error) {
-        console.error("Erreur chargement fiches:", error);
+    const fetchUserAndFiches = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/connexion");
       } else {
-        setFiches(data);
+        setUser(user);
+        const { data, error } = await supabase
+          .from("fiches")
+          .select("id, titre")
+          .eq("user_id", user.id);
+        if (!error) {
+          setFiches(data);
+        }
       }
     };
 
-    chargerFiches();
-  }, []);
+    fetchUserAndFiches();
+  }, [navigate]);
 
-  const supprimerFiche = async (id, e) => {
-    e.stopPropagation();
+  const handleNewFiche = () => {
+    navigate("/fiche");
+  };
+
+  const handlePaiement = () => {
+    navigate("/paiement");
+  };
+
+  const handleDelete = async (id) => {
     const { error } = await supabase.from("fiches").delete().eq("id", id);
     if (!error) {
-      setFiches(prev => prev.filter(f => f.id !== id));
+      setFiches(fiches.filter((fiche) => fiche.id !== id));
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow">
+    <div className="p-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{t("liste.title")}</h2>
-        <button
-          onClick={() => navigate("/fiche")}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
-        >
-          {t("liste.new")}
-        </button>
+        <h1 className="text-3xl font-bold">{t("liste.title")}</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={handleNewFiche}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {t("liste.new")}
+          </button>
+          <button
+            onClick={handlePaiement}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {t("liste.paiement")}
+          </button>
+        </div>
       </div>
-
-      {fiches.length === 0 ? (
-        <p className="text-gray-600">{t("liste.aucune")}</p>
-      ) : (
-        <ul className="space-y-2">
-          {fiches.map((fiche) => (
-            <li
-              key={fiche.id}
-              className="bg-gray-50 border border-gray-200 rounded p-4 flex justify-between items-center hover:bg-gray-100 transition cursor-pointer"
-              onClick={() => navigate(`/fiche/${fiche.id}`)}
+      <ul className="space-y-4">
+        {fiches.map((fiche) => (
+          <li
+            key={fiche.id}
+            className="flex justify-between items-center bg-white p-4 rounded shadow"
+          >
+            <span>{fiche.titre}</span>
+            <button
+              onClick={() => handleDelete(fiche.id)}
+              className="text-red-600 hover:text-red-800"
             >
-              <span className="font-medium text-gray-900">{fiche.titre}</span>
-              <button
-                onClick={(e) => supprimerFiche(fiche.id, e)}
-                className="text-red-600 hover:text-red-800"
-              >
-                <Trash2 size={18} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+              <Trash2 />
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
