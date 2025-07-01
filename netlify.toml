@@ -1,3 +1,10 @@
-[build]
-  functions = "netlify/functions"
-  publish = "dist"
+[build.environment]
+  NODE_VERSION = "18.18.0"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
