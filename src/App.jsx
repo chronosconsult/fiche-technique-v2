@@ -20,18 +20,12 @@ export default function App() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       const user = session?.user;
       setIsConnected(!!user);
-      if (user) {
-        await initProduits(user.id);
-      }
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         const user = session?.user;
         setIsConnected(!!user);
-        if (user) {
-          await initProduits(user.id, navigator.language);
-        }
       }
     );
 
