@@ -1,6 +1,5 @@
 import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Button } from "@/components/ui/button";
 
 // Initialisation de Stripe avec la clé publique (production)
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -26,9 +25,10 @@ export default function Paiement() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold mb-4">Souscrire à un abonnement</h1>
-      <Button onClick={handleClick} className="text-white bg-blue-600 hover:bg-blue-700">
-        Payer avec Stripe
-      </Button>
+      <button onClick={handleClick} className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+  Payer avec Stripe
+</button>
+
     </div>
   );
 }
