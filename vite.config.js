@@ -5,9 +5,8 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    dedupe: ["@stripe/stripe-js"],
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@stripe/stripe-js": require.resolve("@stripe/stripe-js"),
     },
   },
   build: {
