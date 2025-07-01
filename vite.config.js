@@ -6,12 +6,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@stripe/stripe-js": require.resolve("@stripe/stripe-js"),
+      "@": path.resolve(__dirname, "src"),
     },
   },
-  build: {
-    rollupOptions: {
-      external: ["@stripe/stripe-js"],
-    },
-  },
+  optimizeDeps: {
+    include: ["@stripe/stripe-js"]
+  }
 });
