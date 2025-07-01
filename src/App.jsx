@@ -12,6 +12,8 @@ import Accueil from "./Accueil";
 import { supabase } from "./supabaseClient";
 import { initProduits } from "./utils/initProduits.js";
 import { DeviseProvider } from "./contexts/DeviseContext";
+import Paiement from "./pages/Paiement";
+
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(null);
@@ -65,6 +67,16 @@ export default function App() {
               </RequireAuth>
             }
           />
+	  <Route
+  path="/paiement"
+  element={
+    <RequireAuth>
+      <Layout>
+        <Paiement />
+      </Layout>
+    </RequireAuth>
+  }
+/>
 
           <Route
             path="/mercurial"
