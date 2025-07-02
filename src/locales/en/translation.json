@@ -4,7 +4,8 @@
     "mercurial": "Price List",
     "deconnexion": "Logout",
     "connexion": "Login",
-    "inscription": "Sign Up"
+    "inscription": "Sign Up",
+    "paiement": "Payment"
   },
   "login": {
     "title": "Login",

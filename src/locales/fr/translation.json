@@ -4,7 +4,8 @@
     "mercurial": "Mercurial",
     "deconnexion": "Déconnexion",
     "connexion": "Connexion",
-    "inscription": "Inscription"
+    "inscription": "Inscription",
+    "paiement": "Paiement"
   },
   "login": {
     "title": "Connexion",

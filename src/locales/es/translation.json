@@ -4,7 +4,8 @@
     "mercurial": "Mercurial",
     "deconnexion": "Cerrar sesión",
     "connexion": "Conexión",
-    "inscription": "Registrarse"
+    "inscription": "Registrarse",
+    "paiement": "Pago"
   },
   "login": {
     "title": "Iniciar sesión",
