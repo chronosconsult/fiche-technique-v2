@@ -2,7 +2,9 @@
   NODE_VERSION = "18.18.0"
 
 [functions]
+  directory = "netlify/functions"
   node_bundler = "esbuild"
+
 
 [[redirects]]
   from = "/api/*"
