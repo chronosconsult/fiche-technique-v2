@@ -1,4 +1,5 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+console.log("Netlify build test");
 
 exports.handler = async (event) => {
   try {
