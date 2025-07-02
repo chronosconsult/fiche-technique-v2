@@ -11,33 +11,61 @@ const supabase = createClient(
 
 export default function Paiement() {
   const handleClick = async () => {
-    const stripe = await stripePromise;
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const stripe = await stripePromise;
+      const { data: { user }, error } = await supabase.auth.getUser();
 
-    const response = await fetch("/.netlify/functions/create-checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userEmail: user.email }),
-    });
+      if (error || !user || !user.email) {
+        alert("Utilisateur non connecté ou email indisponible.");
+        return;
+      }
 
-    const session = await response.json();
+      const response = await fetch("/.netlify/functions/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userEmail: user.email }),
+      });
 
-    const result = await stripe.redirectToCheckout({ sessionId: session.id });
-    if (result.error) {
-      console.error(result.error.message);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Erreur API:", errorText);
+        alert("Échec de la création de la session Stripe.");
+        return;
+      }
+
+      const session = await response.json();
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+      if (result.error) {
+        console.error(result.error.message);
+        alert("Erreur de redirection vers Stripe.");
+      }
+    } catch (err) {
+      console.error("Erreur inattendue:", err);
+      alert("Erreur technique. Consulte la console pour plus de détails.");
     }
   };
 
   const handlePortalRedirect = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const email = user.email;
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user || !user.email) {
+        alert("Utilisateur non connecté ou email indisponible.");
+        return;
+      }
 
       const response = await fetch("/.netlify/functions/create-portal-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: user.email }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Erreur API:", errorText);
+        alert("Échec de la redirection vers le portail client.");
+        return;
+      }
 
       const data = await response.json();
       if (data.url) {

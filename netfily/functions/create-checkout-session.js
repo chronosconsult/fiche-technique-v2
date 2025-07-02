@@ -1,32 +1,47 @@
-import Stripe from "stripe";
-import { NextResponse } from "next/server";
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-export async function POST(req) {
-  const { user_id, email } = await req.json();
-
+exports.handler = async (event) => {
   try {
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: "subscription",
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Requête vide" }),
+      };
+    }
+
+    const parsedBody = JSON.parse(event.body);
+    const userEmail = parsedBody.userEmail;
+
+    if (!userEmail) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Email utilisateur manquant" }),
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
+      mode: "subscription",
       line_items: [
         {
           price: process.env.STRIPE_PRICE_ID,
           quantity: 1,
         },
       ],
-      success_url: `${process.env.VITE_SITE_URL}/paiement/validation`,
-      cancel_url: `${process.env.VITE_SITE_URL}/paiement/erreur`,
-      metadata: {
-        user_id,
-        email,
-      },
+      success_url: `${process.env.URL}/success`,
+      cancel_url: `${process.env.URL}/cancel`,
+      customer_email: userEmail,
     });
 
-    return NextResponse.json({ url: checkoutSession.url });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ id: session.id }),
+    };
   } catch (error) {
-    console.error("Erreur lors de la création de la session Stripe:", error);
-    return NextResponse.json({ error: "Erreur de création de session" }, { status: 500 });
+    console.error("Erreur Stripe:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Erreur serveur Stripe" }),
+    };
   }
-}
+};

@@ -1,46 +1,46 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Méthode non autorisée' }),
-    };
-  }
-
   try {
-    const { email } = JSON.parse(event.body);
-
-    // Recherche l'utilisateur dans Supabase par son email
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('stripe_customer_id')
-      .eq('email', email)
-      .single();
-
-    if (error || !user) {
-      throw new Error("Utilisateur ou ID client introuvable.");
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Requête vide" }),
+      };
     }
 
-    const session = await stripe.billingPortal.sessions.create({
-      customer: user.stripe_customer_id,
-      return_url: `${process.env.VITE_SITE_URL}/fiches`,
+    const parsedBody = JSON.parse(event.body);
+    const email = parsedBody.email;
+
+    if (!email) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Email requis" }),
+      };
+    }
+
+    const customers = await stripe.customers.list({ email });
+    if (!customers.data.length) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: "Aucun client trouvé pour cet email" }),
+      };
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: customers.data[0].id,
+      return_url: `${process.env.URL}/dashboard`,
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ url: session.url }),
+      body: JSON.stringify({ url: portalSession.url }),
     };
-  } catch (err) {
+  } catch (error) {
+    console.error("Erreur portail Stripe:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      body: JSON.stringify({ error: "Erreur serveur Stripe" }),
     };
   }
 };
