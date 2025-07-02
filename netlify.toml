@@ -3,6 +3,8 @@
 
 [build]
   command = "CI= npm run build"
+  publish = "dist"
+  functions = "functions"
 
 [functions]
   directory = "netlify/functions"
