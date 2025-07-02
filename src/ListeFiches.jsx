@@ -41,10 +41,6 @@ export default function ListeFiches() {
     navigate("/fiche");
   };
 
-  const handlePaiement = () => {
-    navigate("/paiement");
-  };
-
   const handleDelete = async (id) => {
     const { error } = await supabase.from("fiches").delete().eq("id", id);
     if (!error) {
@@ -62,12 +58,6 @@ export default function ListeFiches() {
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             {t("liste.new")}
-          </button>
-          <button
-            onClick={handlePaiement}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {t("liste.paiement")}
           </button>
         </div>
       </div>
