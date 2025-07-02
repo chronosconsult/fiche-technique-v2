@@ -12,10 +12,14 @@ const supabase = createClient(
 export default function Paiement() {
   const handleClick = async () => {
     const stripe = await stripePromise;
+    const { data: { user } } = await supabase.auth.getUser();
 
     const response = await fetch("/.netlify/functions/create-checkout-session", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userEmail: user.email }),
     });
+
     const session = await response.json();
 
     const result = await stripe.redirectToCheckout({ sessionId: session.id });
