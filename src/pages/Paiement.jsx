@@ -20,7 +20,7 @@ export default function Paiement() {
         return;
       }
 
-      const response = await fetch("/.netlify/functions/create-checkout-session", {
+      const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userEmail: user.email }),
@@ -54,7 +54,7 @@ export default function Paiement() {
         return;
       }
 
-      const response = await fetch("/.netlify/functions/create-portal-session", {
+      const response = await fetch("/api/create-portal-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email }),
