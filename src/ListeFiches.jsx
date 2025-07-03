@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
 import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from "./supabaseClient.js";
 
 export default function ListeFiches() {
   const navigate = useNavigate();

@@ -17,6 +17,9 @@ export default function Mercurial() {
     async function charger() {
       const { data: userData } = await supabase.auth.getUser();
       const user = userData?.user;
+
+      console.log(userData, user);
+      
       if (!user) return;
       setUserId(user.id);
 

@@ -1,28 +1,37 @@
 import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../supabaseClient.js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Paiement() {
   const handleClick = async () => {
     try {
       const stripe = await stripePromise;
-      const { data: { user }, error } = await supabase.auth.getUser();
-
+      
+      // Correction 1: Destructuration correcte
+      const { data: userData, error } = await supabase.auth.getUser();
+      const user = userData?.user;
+      
+      // Correction 2: Affichage correct pour debug
+      console.log("UserData:", userData);
+      console.log("User:", user);
+      
+      // Correction 3: Vérification correcte
       if (error || !user || !user.email) {
         alert("Utilisateur non connecté ou email indisponible.");
+        console.error("Erreur auth:", error);
         return;
       }
 
-      const response = await fetch("/api/create-checkout-session", {
+      const response = await fetch(`${baseUrl}/create-checkout-session`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify({ userEmail: user.email }),
       });
 
@@ -51,10 +60,11 @@ export default function Paiement() {
 
       if (error || !user || !user.email) {
         alert("Utilisateur non connecté ou email indisponible.");
+        console.error("Erreur auth:", error);
         return;
       }
 
-      const response = await fetch("/api/create-portal-session", {
+      const response = await fetch(`${baseUrl}/create-portal-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email }),
